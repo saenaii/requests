@@ -1,4 +1,4 @@
-module requests
+module  github.com/saenaii/requests
 
 go 1.14
 
