@@ -1,8 +1,10 @@
 package implement
 
 import (
+	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -23,10 +25,34 @@ func NewClient() *Impl {
 }
 
 // GET request
-func (h *Impl) GET(url string, header map[string]string) (*Response, error) {
+func (h *Impl) Get(url string, header map[string]string) (*Response, error) {
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return &Response{}, err
+	}
+	addHeader(request, header)
+
+	r, err := h.client.Do(request)
+	if err != nil {
+		return &Response{}, err
+	}
+	defer r.Body.Close()
+
+	content, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return &Response{}, err
+	}
+
+	return &Response{
+		Content:    content,
+		StatusCode: r.StatusCode,
+	}, nil
+}
+
+func (h *Impl) Post(url string, header map[string]string, payload io.Reader) (*Response, error) {
+	request, err := http.NewRequest(http.MethodPost, url, payload)
+	if err != nil {
+		return &Response{}, nil
 	}
 	addHeader(request, header)
 
@@ -59,4 +85,16 @@ func addHeader(r *http.Request, header map[string]string) {
 	for k, v := range header {
 		r.Header.Add(k, v)
 	}
+}
+
+func BuildQuery(content map[string]string) string {
+	var queryString string
+	for k, v := range content {
+		queryString += k + "=" + v + "&"
+	}
+	return strings.TrimRight(queryString, "&")
+}
+
+func BuildFormData(content map[string]string) string {
+	return ""
 }

@@ -1,9 +1,14 @@
 package requests
 
-import "github.com/saenaii/requests/implement"
+import (
+	"io"
+
+	"github.com/saenaii/requests/implement"
+)
 
 type API interface {
-	GET(url string, header map[string]string) (*implement.Response, error)
+	Get(url string, header map[string]string) (*implement.Response, error)
+	Post(url string, header map[string]string, payload io.Reader) (*implement.Response, error)
 }
 
 func NewInstance() *implement.Impl {
