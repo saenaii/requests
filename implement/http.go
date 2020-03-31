@@ -1,6 +1,7 @@
 package implement
 
 import (
+	"encoding/base64"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -98,6 +99,18 @@ func BuildQuery(content map[string]string) string {
 	return strings.TrimRight(queryString, "&")
 }
 
-func BuildFormData(content map[string]string) string {
-	return ""
+func BuildFormData(content map[string]string, boundary string) string {
+	var b strings.Builder
+	for k, v := range content {
+		b.WriteString(boundary + "\r\n")
+		b.WriteString(`Content-Disposition: form-data; name="` + k + "\"\r\n\r\n")
+		b.WriteString(v + "\r\n")
+	}
+	b.WriteString(boundary + "--\r\n")
+	return b.String()
+}
+
+func genBoundary() string {
+	t := time.Now().Format(time.RFC3339)
+	return strings.Repeat("-", 6) + base64.StdEncoding.EncodeToString([]byte(t))
 }

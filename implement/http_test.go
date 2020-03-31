@@ -101,3 +101,25 @@ func TestImpl_Post(t *testing.T) {
 		})
 	}
 }
+
+func TestBuildFormData(t *testing.T) {
+	testTable := []struct {
+		name     string
+		boundary string
+		content  map[string]string
+	}{
+		{
+			name:     "happy path",
+			boundary: genBoundary(),
+			content:  map[string]string{"name": "abc"},
+		},
+	}
+
+	for _, c := range testTable {
+		t.Run(c.name, func(t *testing.T) {
+			formData := BuildFormData(c.content, c.boundary)
+			n := strings.Count(formData, c.boundary)
+			assert.Equal(t, len(c.content)+1, n)
+		})
+	}
+}
