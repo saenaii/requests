@@ -16,6 +16,7 @@ func TestImpl_Get(t *testing.T) {
 		name    string
 		handler func(w http.ResponseWriter, r *http.Request)
 		header  map[string]string
+		query   map[string]string
 		expect  string
 		wantErr bool
 	}{
@@ -24,6 +25,7 @@ func TestImpl_Get(t *testing.T) {
 			handler: func(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("Hello world"))
 			},
+			query:   map[string]string{"a": "b"},
 			expect:  "Hello world",
 			wantErr: false,
 		}, {
@@ -45,7 +47,7 @@ func TestImpl_Get(t *testing.T) {
 
 			h := NewClient()
 			h.SetTimeout(time.Second)
-			r, err := h.Get(mockServer.URL, nil)
+			r, err := h.Get(mockServer.URL, nil, c.query)
 			if c.wantErr {
 				assert.NotNil(t, err)
 			} else {

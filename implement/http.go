@@ -25,7 +25,10 @@ func NewClient() *Impl {
 }
 
 // GET request
-func (h *Impl) Get(url string, header map[string]string) (*Response, error) {
+func (h *Impl) Get(url string, header, query map[string]string) (*Response, error) {
+	if query != nil {
+		url += "?" + BuildQuery(query)
+	}
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return &Response{}, err

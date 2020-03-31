@@ -7,7 +7,7 @@ import (
 )
 
 type API interface {
-	Get(url string, header map[string]string) (*implement.Response, error)
+	Get(url string, header, query map[string]string) (*implement.Response, error)
 	Post(url string, header map[string]string, payload io.Reader) (*implement.Response, error)
 }
 
